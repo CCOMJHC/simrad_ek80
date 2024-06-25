@@ -89,7 +89,8 @@ void SubscriptionManager::receivePacket(const std::vector<uint8_t>& packet)
     }
     else
     {
-      auto data_ptr = std::make_shared<std::vector<uint8_t> >(data->data,&data->data[data->NoOfBytes]);
+      auto data_it = packet.begin() + sizeof(packet::ProcessedData) - sizeof(unsigned char *);
+      auto data_ptr = std::make_shared<std::vector<uint8_t> >(data_it, packet.end());
       std::lock_guard<std::mutex> lock(subscriptions_mutex_);
       if(subscriptions_[data->SubscriptionID])
         subscriptions_[data->SubscriptionID]->addData(data_ptr);
